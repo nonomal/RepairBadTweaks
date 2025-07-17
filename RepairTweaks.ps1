@@ -25,7 +25,8 @@ function checkTweaks {
         'Spectre Meltdown Mitigations',
         'HPET',
         'Mouse Keyboard Queue Size',
-        'Csrss Priority'
+        'Csrss Priority',
+        'Multi-Plane Overlay'
     )
     #add to hashtable
     foreach ($tweak in $tweaks) {
@@ -169,6 +170,11 @@ function checkTweaks {
         $tweaksTable['Csrss Priority'] = $true
     }
 
+    #check mpo disabled
+    if (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\Dwm' -Name 'OverlayTestMode' -ErrorAction SilentlyContinue) {
+        $tweaksTable['Multi-Plane Overlay'] = $true
+    }
+
     return $tweaksTable
 }
 
@@ -258,6 +264,11 @@ function repairTweaks($tweakNames) {
         #repair csrss priority
         if ($tweak -eq 'Csrss Priority') {
             Remove-Item -Path 'registry::HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\csrss.exe\PerfOptions' -Recurse -Force
+        }
+
+        #repair mpo
+        if ($tweak -eq 'Multi-Plane Overlay') {
+            Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\Dwm' -Name 'OverlayTestMode' -Force
         }
 
     }
