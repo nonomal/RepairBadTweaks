@@ -36,6 +36,8 @@ Run Script From Terminal or PowerShell Prompt as Admin
     - [HPET](#hpet)
     - [Mouse Keyboard Queue Size](#mouse-keyboard-queue-size)
     - [Csrss Priority](#Csrss-Priority)
+    - [Multi-Plane Overlay](#Multi-Plane-Overlay)
+
 
 
 ### Svc Split Threshold
@@ -88,3 +90,8 @@ These values are not set by default and should only be used for debugging (recom
 
 ### Csrss Priority
 - Csrss.exe is a critical system process responsible for things like loading assemblies. For some reason a tweak has gone around to change the priority class of this process. Changing the priority class for any process is a bad idea but especially csrss.exe since its a critical process meaning a crash will cause a BSOD to occur. Learn More about why changing priorities is a bad idea [Here](https://learn.microsoft.com/en-us/windows/win32/procthread/scheduling-priorities#priority-class)
+
+
+### Multi-Plane Overlay
+- Multi-Plane Overlay or MPO allows for multiple overlay planes to exist separate from each other but appear as one image to the user. This feature allows for dwm and other overlays to not add a latency penalty. This along with FSO should NOT be disabled as it is actually beneficial for input lag. Refer to the image below:
+![alt text](image.png)
