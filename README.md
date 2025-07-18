@@ -37,6 +37,7 @@ Run Script From Terminal or PowerShell Prompt as Admin
     - [Mouse Keyboard Queue Size](#mouse-keyboard-queue-size)
     - [Csrss Priority](#Csrss-Priority)
     - [Multi-Plane Overlay](#Multi-Plane-Overlay)
+    - [Memory Management](#Memory-Management)
 
 
 
@@ -95,3 +96,18 @@ These values are not set by default and should only be used for debugging (recom
 ### Multi-Plane Overlay
 - Multi-Plane Overlay or MPO allows for multiple overlay planes to exist separate from each other but appear as one image to the user. This feature allows for dwm and other overlays to not add a latency penalty. This along with FSO should NOT be disabled as it is actually beneficial for input lag. Refer to the image below:
 ![alt text](image.png)
+
+### Memory Management
+- While theres lots of registry keys that are located in the Memory Management location none of them should be touched. Most keys are only for 32bit systems or have not been used since XP, Vista days. If you want to try out a properly setup memory management configuration that is different from default windows builds try a server build such as server 2025. 
+
+**Read More:**
+
+https://www.tweakhound.com/2011/09/20/bad-tweaks 
+
+https://serverfault.com/questions/12150/does-the-disablepagingexecutive-registry-change-have-any-actual-effect
+
+https://learn.microsoft.com/en-us/windows/win32/memory/memory-management-registry-keys
+
+> [!NOTE]  
+> If the script detects this bad tweak it will attempt to repair it to default, however I recommend a fresh install
+>
