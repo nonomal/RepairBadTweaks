@@ -26,7 +26,8 @@ function checkTweaks {
         'HPET',
         'Mouse Keyboard Queue Size',
         'Csrss Priority',
-        'Multi-Plane Overlay'
+        'Multi-Plane Overlay',
+        'Memory Management'
     )
     #add to hashtable
     foreach ($tweak in $tweaks) {
@@ -175,6 +176,35 @@ function checkTweaks {
         $tweaksTable['Multi-Plane Overlay'] = $true
     }
 
+    #check Memory Management 
+    #theres lots of possible reg keys here so as long as one of them is applied ill assume most of them are also exist
+    $memPath = 'HKLM:\System\CurrentControlSet\Control\Session Manager\Memory Management'
+    $defaultValues = @(
+        'ClearPageFileAtShutdown'  
+        'DisablePagingExecutive' 
+        'LargeSystemCache' 
+        'NonPagedPoolQuota' 
+        'NonPagedPoolSize' 
+        'PagedPoolQuota' 
+        'PagedPoolSize'
+    )
+    $keys = Get-ItemProperty $memPath 
+    foreach ($value in $defaultValues) {
+        #if any one of these is not 0 its been changed 
+        if ($keys.$value -ne 0) {
+            $tweaksTable['Memory Management'] = $true
+        }
+    }
+    #check others 
+    if (Get-ItemProperty $memPath -Name 'IoPageLockLimit' -ErrorAction SilentlyContinue) {
+        $tweaksTable['Memory Management'] = $true
+    }
+
+    if (Get-ItemProperty $memPath -Name 'CacheUnmapBehindLengthInMB' -ErrorAction SilentlyContinue) {
+        $tweaksTable['Memory Management'] = $true
+    }
+
+
     return $tweaksTable
 }
 
@@ -269,6 +299,36 @@ function repairTweaks($tweakNames) {
         #repair mpo
         if ($tweak -eq 'Multi-Plane Overlay') {
             Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\Dwm' -Name 'OverlayTestMode' -Force
+        }
+
+        #repair mem mangement
+        #try to set it as close to default as possible
+        if ($tweak -eq 'Memory Management') {
+            Reg.exe add 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'ClearPageFileAtShutdown' /t REG_DWORD /d '0' /f *>$null
+            Reg.exe add 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'DisablePagingExecutive' /t REG_DWORD /d '0' /f *>$null
+            Reg.exe add 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'LargeSystemCache' /t REG_DWORD /d '0' /f *>$null
+            Reg.exe add 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'NonPagedPoolQuota' /t REG_DWORD /d '0' /f *>$null
+            Reg.exe add 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'NonPagedPoolSize' /t REG_DWORD /d '0' /f *>$null
+            Reg.exe add 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'PagedPoolQuota' /t REG_DWORD /d '0' /f *>$null
+            Reg.exe add 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'PagedPoolSize' /t REG_DWORD /d '0' /f *>$null
+            Reg.exe add 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'SecondLevelDataCache' /t REG_DWORD /d '0' /f *>$null
+            Reg.exe add 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'SystemPages' /t REG_DWORD /d '0' /f *>$null
+            Reg.exe delete 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'IoPageLockLimit' /f *>$null
+            Reg.exe delete 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'CacheUnmapBehindLengthInMB' /f *>$null
+            Reg.exe delete 'HKLM\System\CurrentControlSet\Control\Session Manager\Memory Management' /v 'SimulateCommitSavings' /f *>$null
+            Reg.exe delete 'HKLM\System\CurrentControlSet\Control\Session Manager\Memory Management' /v 'TrackLockedPages' /f *>$null
+            Reg.exe delete 'HKLM\System\CurrentControlSet\Control\Session Manager\Memory Management' /v 'TrackPtes' /f *>$null
+            Reg.exe delete 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'DynamicMemory' /f *>$null
+            Reg.exe delete 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'EnforceWriteProtection' /f *>$null
+            Reg.exe delete 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'MakeLowMemory' /f *>$null
+            Reg.exe delete 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'SystemCacheLimit' /f *>$null
+            Reg.exe delete 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'SessionSpaceLimit' /f *>$null
+            Reg.exe delete 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'WriteWatch' /f *>$null
+            Reg.exe delete 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'SnapUnloads' /f *>$null
+            Reg.exe delete 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'MapAllocationFragment'/f *>$null
+            Reg.exe delete 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'Mirroring' /f *>$null
+            Reg.exe delete 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'DontVerifyRandomDrivers' /f *>$null #lmao wtf is this key
+            Reg.exe delete 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'EnableLowVaAccess' /f *>$null
         }
 
     }
