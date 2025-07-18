@@ -1,6 +1,7 @@
 ## Repair Bad Tweaks
 
-<img width="239" alt="image" src="https://github.com/user-attachments/assets/5226dccc-6d13-4892-bbfc-1a9f87bf269b">
+<img width="288" height="256" alt="{62D32C78-7D2B-4902-ABEB-F42DAC55E0DD}" src="https://github.com/user-attachments/assets/ce5431c4-fb89-42aa-a34c-1341e150002d" />
+
 
 
 ### Why?
