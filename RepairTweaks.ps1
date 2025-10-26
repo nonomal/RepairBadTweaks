@@ -39,7 +39,7 @@ function checkTweaks {
     $svcSplitCurrent = Get-ItemPropertyValue -Path "registry::$currentControlSet\Control" -Name 'SvcHostSplitThresholdInKB'
     $svcSplitControl = Get-ItemPropertyValue -Path "registry::$controlSet001\Control" -Name 'SvcHostSplitThresholdInKB' 
     #default on server seems to be 39999 so double check for that
-    if ($svcSplitCurrent -ne 3670016 -or $svcSplitControl -ne 3670016 -and $svcSplitCurrent -ne 3774873 -or $svcSplitControl -ne 3774873) {
+    if (($svcSplitCurrent -ne 3670016 -or $svcSplitControl -ne 3670016) -and ($svcSplitCurrent -ne 3774873 -or $svcSplitControl -ne 3774873)) {
         $tweaksTable['Svc Split Threshold'] = $true
     }
 
