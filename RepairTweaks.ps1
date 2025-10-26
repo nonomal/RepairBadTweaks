@@ -27,7 +27,8 @@ function checkTweaks {
         'Mouse Keyboard Queue Size',
         'Csrss Priority',
         'Multi-Plane Overlay',
-        'Memory Management'
+        'Memory Management',
+        'Raw Mouse Throttle'
     )
     #add to hashtable
     foreach ($tweak in $tweaks) {
@@ -36,8 +37,8 @@ function checkTweaks {
     
     #check svc split threshold
     $svcSplitCurrent = Get-ItemPropertyValue -Path "registry::$currentControlSet\Control" -Name 'SvcHostSplitThresholdInKB'
-    $svcSplitControl = Get-ItemPropertyValue -Path "registry::$controlSet001\Control" -Name 'SvcHostSplitThresholdInKB'
-    if ($svcSplitCurrent -ne 3670016 -or $svcSplitControl -ne 3670016) {
+    $svcSplitControl = Get-ItemPropertyValue -Path "registry::$controlSet001\Control" -Name 'SvcHostSplitThresholdInKB' 
+    if ($svcSplitCurrent -ne 3670016 -or $svcSplitControl -ne 3670016 -or $svcSplitCurrent -ne 3774873 -or $svcSplitControl -ne 3774873) {
         $tweaksTable['Svc Split Threshold'] = $true
     }
 
@@ -204,6 +205,10 @@ function checkTweaks {
         $tweaksTable['Memory Management'] = $true
     }
 
+    #check raw mouse throttle
+    if (Get-ItemProperty 'HKCU:\Control Panel\Mouse' -Name 'RawMouseThrottleEnabled' -ErrorAction SilentlyContinue) {
+        $tweaksTable['Raw Mouse Throttle'] = $true
+    }
 
     return $tweaksTable
 }
@@ -329,6 +334,15 @@ function repairTweaks($tweakNames) {
             Reg.exe delete 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'Mirroring' /f *>$null
             Reg.exe delete 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'DontVerifyRandomDrivers' /f *>$null #lmao wtf is this key
             Reg.exe delete 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' /v 'EnableLowVaAccess' /f *>$null
+        }
+
+
+        #repair mouse throttle
+        if ($tweak -eq 'Raw Mouse Throttle') {
+            reg.exe delete 'HKCU\Control Panel\Mouse' /v 'RawMouseThrottleEnabled' /f *>$null
+            reg.exe delete 'HKCU\Control Panel\Mouse' /v 'RawMouseThrottleForced' /f *>$null
+            reg.exe delete 'HKCU\Control Panel\Mouse' /v 'RawMouseThrottleDuration' /f *>$null
+            reg.exe delete 'HKCU\Control Panel\Mouse' /v 'RawMouseThrottleLeeway' /f *>$null
         }
 
     }
