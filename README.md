@@ -112,3 +112,26 @@ https://learn.microsoft.com/en-us/windows/win32/memory/memory-management-registr
 > [!NOTE]  
 > If the script detects this bad tweak it will attempt to repair it to default, however I recommend a fresh install
 >
+
+### Raw Mouse Throttle
+
+- Back in May of 2023 Microsoft added a new change to Windows 11 that mitigated game stutters when using a high polling rate mouse (Ex. 8k hz Polling) 
+- This change made it so all background listeners would be throttled and coalesced to a default value of 125hz
+- This is a good change as it means background apps that are listening to raw mouse input would not be nearly as resource intensive as before 
+
+#### Additional Note
+
+- the amount of throttle can be adjusted or removed completley(NOT RECOMMENDED)
+- By changing the duration registry key the throttle can be lowered down to 50hz, you can try this out and see if you feel an improvement on desktop
+  
+```ps
+reg add "HKCU\Control Panel\Mouse" /v "RawMouseThrottleEnabled" /t REG_DWORD /d "1" /f
+reg add "HKCU\Control Panel\Mouse" /v "RawMouseThrottleDuration" /t REG_DWORD /d "20" /f
+```
+> [!NOTE]
+> Setting this to 50hz will not effect games, there could be a rare case of a user with an extremely slow cpu and 8k hz mouse where this could be potentially useful
+> 
+
+
+#### Dev Blog Documenting This Change
+https://blogs.windows.com/windowsdeveloper/2023/05/26/delivering-delightful-performance-for-more-than-one-billion-users-worldwide/
