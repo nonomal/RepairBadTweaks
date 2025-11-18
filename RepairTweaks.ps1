@@ -234,8 +234,8 @@ function repairTweaks($tweakNames) {
         if ($tweak -eq 'Mouse Keyboard Queue Size') {
             Reg.exe add 'HKLM\SYSTEM\CurrentControlSet\Services\kbdclass\Parameters' /v 'KeyboardDataQueueSize' /t REG_DWORD /d '100' /f *>$null
             Reg.exe add 'HKLM\SYSTEM\ControlSet001\Services\kbdclass\Parameters' /v 'KeyboardDataQueueSize' /t REG_DWORD /d '100' /f *>$null
-            Reg.exe add 'HKLM\SYSTEM\CurrentControlSet\Services\mouclass\Parameters' /v 'KeyboardDataQueueSize' /t REG_DWORD /d '100' /f *>$null
-            Reg.exe add 'HKLM\SYSTEM\ControlSet001\Services\mouclass\Parameters' /v 'KeyboardDataQueueSize' /t REG_DWORD /d '100' /f *>$null
+            Reg.exe add 'HKLM\SYSTEM\CurrentControlSet\Services\mouclass\Parameters' /v 'MouseDataQueueSize' /t REG_DWORD /d '100' /f *>$null
+            Reg.exe add 'HKLM\SYSTEM\ControlSet001\Services\mouclass\Parameters' /v 'MouseDataQueueSize' /t REG_DWORD /d '100' /f *>$null
         }
         #repair timer res
         if ($tweak -eq 'Timer Resolution') {
@@ -407,4 +407,5 @@ else {
     else {
         exit
     }
+
 }
