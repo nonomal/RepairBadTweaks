@@ -28,7 +28,8 @@ function checkTweaks {
         'Csrss Priority',
         'Multi-Plane Overlay',
         'Memory Management',
-        'Raw Mouse Throttle'
+        'Raw Mouse Throttle',
+        'Global Timer Resolution Requests'
     )
     #add to hashtable
     foreach ($tweak in $tweaks) {
@@ -114,8 +115,8 @@ function checkTweaks {
     }
 
     #check High precision event timer
-    $status = (Get-PnpDevice -FriendlyName 'High precision event timer').Status
-    if ($status -ne 'OK') {
+    $status = (Get-PnpDevice -InstanceId 'ACPI\PNP0103\*').Status
+    if ($status -ne 'OK' -and $status) {
         $tweaksTable['HPET'] = $true
     }
 
@@ -211,6 +212,11 @@ function checkTweaks {
         $tweaksTable['Raw Mouse Throttle'] = $true
     }
 
+    #global timer requests
+    if (Get-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\kernel' -Name 'GlobalTimerResolutionRequests' -ErrorAction SilentlyContinue) {
+        $tweaksTable['Global Timer Resolution Requests'] = $true
+    }
+
     return $tweaksTable
 }
 
@@ -228,7 +234,7 @@ function repairTweaks($tweakNames) {
         }
         #repair hpet
         if ($tweak -eq 'HPET') {
-            Get-PnpDevice -FriendlyName 'High precision event timer' | Enable-PnpDevice -Confirm:$false
+            Get-PnpDevice -InstanceId 'ACPI\PNP0103\*' | Enable-PnpDevice -Confirm:$false
         }
         #repair mouse keyboard queue size
         if ($tweak -eq 'Mouse Keyboard Queue Size') {
@@ -344,6 +350,11 @@ function repairTweaks($tweakNames) {
             reg.exe delete 'HKCU\Control Panel\Mouse' /v 'RawMouseThrottleForced' /f *>$null
             reg.exe delete 'HKCU\Control Panel\Mouse' /v 'RawMouseThrottleDuration' /f *>$null
             reg.exe delete 'HKCU\Control Panel\Mouse' /v 'RawMouseThrottleLeeway' /f *>$null
+        }
+
+        #repair global timer requests
+        if ($tweak -eq 'Global Timer Resolution Requests') {
+            reg.exe delete 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\kernel' /v 'GlobalTimerResolutionRequests' /f *>$null
         }
 
     }
