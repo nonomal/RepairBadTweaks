@@ -39,6 +39,8 @@ Run Script From Terminal or PowerShell Prompt as Admin
     - [Csrss Priority](#Csrss-Priority)
     - [Multi-Plane Overlay](#Multi-Plane-Overlay)
     - [Memory Management](#Memory-Management)
+    - [Raw Mouse Throttle](#Raw-Mouse-Throttle)
+    - [Global Timer Resolution Requests](#Global-Timer-Resolution-Requests)
 
 
 
@@ -135,3 +137,14 @@ reg add "HKCU\Control Panel\Mouse" /v "RawMouseThrottleDuration" /t REG_DWORD /d
 
 #### Dev Blog Documenting This Change
 https://blogs.windows.com/windowsdeveloper/2023/05/26/delivering-delightful-performance-for-more-than-one-billion-users-worldwide/
+
+
+### Global Timer Resolution Requests
+ - This registry key added in Windows 11 and later versions of Windows 10 overrides the updated behavior of global timer requests
+ - Before this registry key was added the lowest timer reqested by a process would reflect to all other processes so Fe. if app1 is requesting a timer resolution of 15ms but app2 requests 1ms then app1 will also be changed to 1ms along with all other processes. 
+- This behavoir was changed to be per process, mitigating uncessary context switching of processes thus slightly improving performance 
+
+> [!NOTE]
+> This also means without applying this registry key all timer resolution apps will not do anything but change their own timer resolution
+>
+
