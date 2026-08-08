@@ -1,8 +1,13 @@
 #repair bad tweaks by zoic
-If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator')) {
+if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator')) {
     Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
-    Exit	
+    exit	
 }
+
+#black background with white text
+$Host.UI.RawUI.BackgroundColor = 'Black'
+$Host.UI.RawUI.ForegroundColor = 'White'
+Clear-Host
 
 #global vars
 $Global:currentControlSet = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet'
@@ -378,10 +383,9 @@ foreach ($tweak in $getTweaks.GetEnumerator()) {
 #no bad tweaks found
 if ($trueCount -eq $getTweaks.Count) {
     Write-Host 'No Bad Tweaks Found!'
-    $input = Read-Host 'Press ANY Key to Exit...'
-    if ($input) {
-        exit
-    }
+    Write-Host 'Press ANY Key to Exit...' -NoNewline
+    $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
+    exit
 }
 else {
     #use choice cmdlet
@@ -403,10 +407,9 @@ else {
         }
         if ($trueCount -eq $getTweaks.Count) {
             Write-Host 'Tweaks Repaired Successfully!'
-            $input = Read-Host 'Press ANY Key to Exit...'
-            if ($input) {
-                exit
-            }
+            Write-Host 'Press ANY Key to Exit...' -NoNewline
+            $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown')
+            exit
         }
         else {
             Write-Host 'Tweaks Not Repaired:'
